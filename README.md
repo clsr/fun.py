@@ -51,7 +51,7 @@ def fib(n):
     return fib(n-1) + fib(n-2)
 print(fib(100)) # prints 354224848179261915075 way faster than a non-memoized version would
 
-get_age = memo(lambda who: read_int(who + "'s age: '))
+get_age = memo(lambda who: read_int(who + "'s age: "))
 get_age('John') # prompts the user for the age
 get_age('David') # prompts the user for another age
 get_age('John') # doesn't prompt, returns the stored result (hopefully, it wasn't just John's birthday)
