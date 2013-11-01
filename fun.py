@@ -37,7 +37,16 @@ def memo(f):
     A memoized function will store the results of calls into a dict and return
     the cached result instead of calling the function if one is available.
     If the memoized function is supplied unhashable parameters, the memoization
-    is skipped and the function is directly called.'''
+    is skipped and the function is directly called.
+    
+    @memo
+    def fib(n):
+        if n == 0:
+            return 0
+        if n == 1:
+            return 1
+        return fib(n-1) + fib(n-2)
+    print(fib(100)) # unlike non-memoized version, this finishes quite fast'''
     d = {}
     @_wraps(f)
     def wrapper(*args):
@@ -119,15 +128,19 @@ def pattern(*patterns):
     matching them to the patterns.
 
     The pattern matching function produced by this function also has a method
-    `add(pattern, value=None)`. This can be used to add new patterns to the
+    `pattern(pattern, value=None)`. This can be used to add new patterns to the
     function. If the `value` parameter is supplied, then the pattern is added
     to the list of patterns. Otherwise, a new function that takes the value
     as the parameter and, once called, adds the pattern with that value, is
-    returned. This can be used to add patterns with decorators:
+    returned. Since both return the original pattern matching function, the
+    decorated function's name can be the same as the pattern function's and no
+    new variables will be created:
     foo = pattern()
-    @foo.add((int, int))
-    def foo_pair(v):
+    @foo.pattern((int, int))
+    def foo(v): # this overwrites foo with itself, so it's fine
         ...
+    # .pattern can be also chained:
+    foo.pattern((1,), 1).pattern((2,), 2)
 
     fibonacci = pattern(
         ((0,),   0),
@@ -140,10 +153,10 @@ def pattern(*patterns):
     
     # the same as above:
     fibonacci = pattern()
-    fibonacci.add((0,), 0)
-    fibonacci.add((1,), 1)
-    @fibonacci.add((int,))
-    def fib_n(n):
+    fibonacci.pattern((0,), 0)
+    fibonacci.pattern((1,), 1)
+    @fibonacci.pattern((int,))
+    def fibonacci(n):
         return fibonacci(n-1) + fibonacci(n-2)'''
     patterns = list(patterns)
     def pattern_func(*args, **kwargs):
@@ -154,12 +167,13 @@ def pattern(*patterns):
                 return f
         raise TypeError('Non-exhaustive patterns')
     def add_pattern(pattern, value=None):
+        def add_pattern_func(value):
+            patterns.append((pattern, value))
+            return pattern_func
         if value is None:
-            def add_pattern_func(value):
-                patterns.append((pattern, value))
             return add_pattern_func
-        patterns.append((pattern, value))
-    pattern_func.add = add_pattern
+        return add_pattern_func(value)
+    pattern_func.pattern = add_pattern
     return pattern_func
 
 def lt(a):

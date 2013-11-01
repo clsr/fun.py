@@ -79,7 +79,7 @@ function parameter pattern matching
 
 The patterns supplied as arguments to the **pattern** function are pairs (tuples or lists) in the format `(pattern, case)`.
 
-Additionally, the function produced by **pattern** has a method `add(pattern, value=None)`. That can be used to add new patterns. If the `value` parameter of this method is supplied, the pattern is added immediately and nothing is returned. Otherwise, it returns a function that takes that value as the parameter and adds the pattern once it's called. This way, it can be used as a decorator.
+Additionally, the function produced by **pattern** has a method `pattern(pattern, value=None)`. That can be used to add new patterns. If the `value` parameter of this method is supplied, the pattern is added immediately. Otherwise, it returns a function that takes that value as the parameter and adds the pattern once it's called. This way, it can be used as a decorator. Both `.pattern(pattern, value)` and `.pattern(pattern)(value)` return the original pattern matching function, so `.pattern` calls can be chained and the function decorated with `.patter(pattern)` can have the same name as the pattern matching function to avoid creating a new variable.
 
 The `pattern` is matched in the following order:
 
@@ -98,7 +98,7 @@ whatis = pattern(
     (('',),             'empty string'), # values that aren't type, callable, list, tuple and ... are matched using ==
     ((str,),            'string'), # types are matched using isinstance (and patterns are matched in order, so '' will match the previous pattern and not this)
     ([(int, int)],      'pair of ints'), # tuples and lists are matched recursively (also, lists can be used as patterns instead of tuples)
-    (([...],),           'non-empty list'), # ... inside a list/tuple matches one or more elements
+    (([...],),          'non-empty list'), # ... inside a list/tuple matches one or more elements
     ([lambda v: not v], 'false value'), # callables are called with the value and match if their return value evaluates as True
     (...,               lambda v: "I don't know what %r is" % v), # ... is a catch-all pattern
 )
@@ -108,10 +108,10 @@ print(whatis(0)) # false value
 print(whatis(abs)) # I don't know what <built-in function abs> is
 
 fib = pattern()
-fib.add((0,), 0)
-fib.add((1,), 1)
-@fib.add((int,))
-def fib_n(n):
+fib.pattern((0,), 0)
+fib.pattern((1,), 1)
+@fib.pattern((int,))
+def fib(n):
     return fib(n-1) + fib(n-2)
 print(fib(15)) # prints 610
 ```
@@ -141,7 +141,7 @@ The function **negate** takes a function as the parameter and returns a function
 negate(f)(x) == (not f(x))
 ```
 
-These functions are useful in filter predicates or in pattern.
+These functions are useful in filter predicates or in **pattern**.
 
 ```python
 filter(gt(3), range(7)) # filters values (>3): [0, 1, 2, 3, 4, 5, 6] -> [4, 5, 6]
