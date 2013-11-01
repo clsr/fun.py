@@ -103,10 +103,14 @@ whatis = pattern(
     (('',),             'empty string'), # values that aren't type, callable, list, tuple and ... are matched using ==
     ((str,),            'string'), # types are matched using isinstance (and patterns are matched in order, so '' will match the previous pattern and not this)
     ([(int, int)],      'pair of ints'), # tuples and lists are matched recursively (also, lists can be used as patterns instead of tuples)
-    (([...]),           'non-empty list'), # ... inside a list/tuple matches one or more elements
+    (([...],),           'non-empty list'), # ... inside a list/tuple matches one or more elements
     ([lambda v: not v], 'false value'), # callables are called with the value and match if their return value evaluates as True
     (...,               lambda v: "I don't know what %r is' % v), # ... is a catch-all pattern
 )
+print(whatis([1, 2, 3])) # non-empty list
+print(whatis('')) # empty string
+print(whatis(0)) # false value
+print(whatis(abs)) # I don't know what <built-in function abs> is
 ```
 
 comparison functions
