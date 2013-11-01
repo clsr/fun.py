@@ -118,6 +118,17 @@ def pattern(*patterns):
     is a catch-all. Keyword arguments are passed to a callable value without
     matching them to the patterns.
 
+    The pattern matching function produced by this function also has a method
+    `add(pattern, value=None)`. This can be used to add new patterns to the
+    function. If the `value` parameter is supplied, then the pattern is added
+    to the list of patterns. Otherwise, a new function that takes the value
+    as the parameter and, once called, adds the pattern with that value, is
+    returned. This can be used to add patterns with decorators:
+    foo = pattern()
+    @foo.add((int, int))
+    def foo_pair(v):
+        ...
+
     fibonacci = pattern(
         ((0,),   0),
         ((1,),   1),
@@ -125,7 +136,16 @@ def pattern(*patterns):
     )
     fibonacci(0) # directly returns 0
     fibonacci(10) # calls the lambda, returns 55
-    fibonacci('foobar') # raises an exception'''
+    fibonacci('foobar') # raises an exception
+    
+    # the same as above:
+    fibonacci = pattern()
+    fibonacci.add((0,), 0)
+    fibonacci.add((1,), 1)
+    @fibonacci.add((int,))
+    def fib_n(n):
+        return fibonacci(n-1) + fibonacci(n-2)'''
+    patterns = list(patterns)
     def pattern_func(*args, **kwargs):
         for p, f in patterns:
             if _pattern_match(p, args):
@@ -133,6 +153,13 @@ def pattern(*patterns):
                     return f(*args, **kwargs)
                 return f
         raise TypeError('Non-exhaustive patterns')
+    def add_pattern(pattern, value=None):
+        if value is None:
+            def add_pattern_func(value):
+                patterns.append((pattern, value))
+            return add_pattern_func
+        patterns.append((pattern, value))
+    pattern_func.add = add_pattern
     return pattern_func
 
 def lt(a):

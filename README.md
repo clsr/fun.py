@@ -51,7 +51,7 @@ def fib(n):
     return fib(n-1) + fib(n-2)
 print(fib(100)) # prints 354224848179261915075 way faster than a non-memoized version would
 
-get_age = memo(lambda who: read_int(who + "'s age: "))
+get_age = memo(lambda who: int(input(who + "'s age: ")))
 get_age('John') # prompts the user for the age
 get_age('David') # prompts the user for another age
 get_age('John') # doesn't prompt, returns the stored result (hopefully, it wasn't just John's birthday)
@@ -79,6 +79,8 @@ function parameter pattern matching
 
 The patterns supplied as arguments to the **pattern** function are pairs (tuples or lists) in the format `(pattern, case)`.
 
+Additionally, the function produced by **pattern** has a method `add(pattern, value=None)`. That can be used to add new patterns. If the `value` parameter of this method is supplied, the pattern is added immediately and nothing is returned. Otherwise, it returns a function that takes that value as the parameter and adds the pattern once it's called. This way, it can be used as a decorator.
+
 The `pattern` is matched in the following order:
 
 - if the pattern is a list or tuple, recursively apply pattern matching to it and the matching parameter
@@ -92,13 +94,6 @@ If the `case` value of the matched pattern is callable, it is called with all ar
 The `Ellipsis` (or `...` in Python 3) object can be used as a wildcard to match all values from it to the end of the current pattern tuple/list. If used instead of the top-level tuple/list of patterns, the pattern is a catch-all.
 
 ```python
-fib = pattern( # works the same as the earlier definition of fib
-    ((0,),   0),                             # fib(0) = 0
-    ((1,),   1),                             # fib(1) = 1
-    ((int,), lambda n: fib(n-1) + fib(n-2)), # fib(n) = fib(n-1) + fib(n-2)
-)
-print(fib(15)) # prints 610
-
 whatis = pattern(
     (('',),             'empty string'), # values that aren't type, callable, list, tuple and ... are matched using ==
     ((str,),            'string'), # types are matched using isinstance (and patterns are matched in order, so '' will match the previous pattern and not this)
@@ -111,6 +106,14 @@ print(whatis([1, 2, 3])) # non-empty list
 print(whatis('')) # empty string
 print(whatis(0)) # false value
 print(whatis(abs)) # I don't know what <built-in function abs> is
+
+fib = pattern()
+fib.add((0,), 0)
+fib.add((1,), 1)
+@fib.add((int,))
+def fib_n(n):
+    return fib(n-1) + fib(n-2)
+print(fib(15)) # prints 610
 ```
 
 comparison functions
