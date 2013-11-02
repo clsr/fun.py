@@ -5,7 +5,7 @@ from functools import wraps as _wraps
 def compose(*fs):
     '''compose(*functions) -> function
     
-    Compose seveal functions into one.
+    Compose several functions into one.
     When called, the composed function passes its arguments to the last function
     in `fs`, then its return value to the one before it and so on.
     
