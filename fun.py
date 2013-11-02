@@ -252,3 +252,19 @@ def negate(f):
     def negate_func(*a, **k):
         return not f(*a, **k)
     return negate_func
+
+def even(n):
+    '''even(int) -> bool
+
+    Returns True if `n` is even, False otherwise.
+    
+    even(n) == (n % 2 == 0)'''
+    return n % 2 == 0
+
+def odd(n):
+    '''odd(int) -> bool
+
+    Returns True if `n` is odd, False otherwise.
+    
+    even(n) == (n % 2 == 1)'''
+    return n % 2 == 1
