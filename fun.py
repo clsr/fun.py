@@ -14,7 +14,7 @@ def compose(*fs):
     def composed(*arg):
         for fn in fs:
             arg = (fn(*arg),)
-        return arg
+        return arg[0]
     return composed
 
 def flip(f):
