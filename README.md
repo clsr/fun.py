@@ -79,7 +79,7 @@ function parameter pattern matching
 
 The patterns supplied as arguments to the **pattern** function are pairs (tuples or lists) in the format `(pattern, case)`.
 
-Additionally, the function produced by **pattern** has a method `pattern(pattern, value=None)`. That can be used to add new patterns. If the `value` parameter of this method is supplied, the pattern is added immediately. Otherwise, it returns a function that takes that value as the parameter and adds the pattern once it's called. This way, it can be used as a decorator. Both `.pattern(pattern, value)` and `.pattern(pattern)(value)` return the original pattern matching function, so `.pattern` calls can be chained and the function decorated with `.patter(pattern)` can have the same name as the pattern matching function to avoid creating a new variable.
+Additionally, the function produced by **pattern** has a method `pattern(pattern, value=None)`. That can be used to add new patterns. If the `value` parameter of this method is supplied, the pattern is added immediately. Otherwise, it returns a function that takes that value as the parameter and adds the pattern once it's called. This way, it can be used as a decorator. Both `.pattern(pattern, value)` and `.pattern(pattern)(value)` return the original pattern matching function, so `.pattern` calls can be chained and the function decorated with `.pattern(pattern)` can have the same name as the pattern matching function to avoid creating a new variable.
 
 The `pattern` is matched in the following order:
 
@@ -153,6 +153,6 @@ These functions are useful in filter predicates or in **pattern**.
 ```python
 filter(gt(3), range(7)) # filters values (>3): [0, 1, 2, 3, 4, 5, 6] -> [4, 5, 6]
 filter(negate(eq(0)), map(lambda n: n % 3, range(10))) # filters values (!=0): [0, 1, 2, 0, 1, 2, 0, 1, 2, 0] -> [1, 2, 1, 2, 1, 2]
-filter(elem({2, 3, 5, 7, 11, 13}), range(5)) # filters values in {2,3,5,7}: [0, 1, 2, 3, 4] -> [2, 3]
+filter(elem({2, 3, 5, 7}), range(5)) # filters values in {2,3,5,7}: [0, 1, 2, 3, 4] -> [2, 3]
 filter(even, range(5)) # fitlers even values: [0, 1, 2, 3, 4] -> [0, 2, 4]
 ```

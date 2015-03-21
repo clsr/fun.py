@@ -4,11 +4,11 @@ from functools import wraps as _wraps
 
 def compose(*fs):
     '''compose(*functions) -> function
-    
+
     Compose several functions into one.
     When called, the composed function passes its arguments to the last function
     in `fs`, then its return value to the one before it and so on.
-    
+
     compose(f, g, h)(arg) == f(g(h(arg)))'''
     fs = fs[::-1]
     def composed(*arg):
@@ -38,7 +38,7 @@ def memo(f):
     the cached result instead of calling the function if one is available.
     If the memoized function is supplied unhashable parameters, the memoization
     is skipped and the function is directly called.
-    
+
     @memo
     def fib(n):
         if n == 0:
@@ -118,7 +118,7 @@ def pattern(*patterns):
 
     If the pattern matches, the case value is called with the argument if it's
     callable, otherwise the case value is returned (to return callable values,
-    wrap them in a function, as in (lambda *a, **k: return abs) to return the
+    wrap them in a function, as in (lambda *a, **k: abs) to return the
     function abs instead of calling it).
 
     The top-level pattern should be either a list or tuple, where each item
@@ -150,7 +150,7 @@ def pattern(*patterns):
     fibonacci(0) # directly returns 0
     fibonacci(10) # calls the lambda, returns 55
     fibonacci('foobar') # raises an exception
-    
+
     # the same as above:
     fibonacci = pattern()
     fibonacci.pattern((0,), 0)
@@ -257,7 +257,7 @@ def even(n):
     '''even(int) -> bool
 
     Returns True if `n` is even, False otherwise.
-    
+
     even(n) == (n % 2 == 0)'''
     return n % 2 == 0
 
@@ -265,6 +265,6 @@ def odd(n):
     '''odd(int) -> bool
 
     Returns True if `n` is odd, False otherwise.
-    
+
     even(n) == (n % 2 == 1)'''
     return n % 2 == 1
